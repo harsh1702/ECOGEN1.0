@@ -1,30 +1,30 @@
-//  
-//       ,---.     ,--,    .---.     ,--,    ,---.    .-. .-. 
-//       | .-'   .' .')   / .-. )  .' .'     | .-'    |  \| | 
-//       | `-.   |  |(_)  | | |(_) |  |  __  | `-.    |   | | 
-//       | .-'   \  \     | | | |  \  \ ( _) | .-'    | |\  | 
-//       |  `--.  \  `-.  \ `-' /   \  `-) ) |  `--.  | | |)| 
-//       /( __.'   \____\  )---'    )\____/  /( __.'  /(  (_) 
-//      (__)              (_)      (__)     (__)     (__)     
+//
+//       ,---.     ,--,    .---.     ,--,    ,---.    .-. .-.
+//       | .-'   .' .')   / .-. )  .' .'     | .-'    |  \| |
+//       | `-.   |  |(_)  | | |(_) |  |  __  | `-.    |   | |
+//       | .-'   \  \     | | | |  \  \ ( _) | .-'    | |\  |
+//       |  `--.  \  `-.  \ `-' /   \  `-) ) |  `--.  | | |)|
+//       /( __.'   \____\  )---'    )\____/  /( __.'  /(  (_)
+//      (__)              (_)      (__)     (__)     (__)
 //
 //  This file is part of ECOGEN.
 //
-//  ECOGEN is the legal property of its developers, whose names 
-//  are listed in the copyright file included with this source 
+//  ECOGEN is the legal property of its developers, whose names
+//  are listed in the copyright file included with this source
 //  distribution.
 //
 //  ECOGEN is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published 
-//  by the Free Software Foundation, either version 3 of the License, 
+//  it under the terms of the GNU General Public License as published
+//  by the Free Software Foundation, either version 3 of the License,
 //  or (at your option) any later version.
-//  
+//
 //  ECOGEN is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 //  GNU General Public License for more details.
-//  
+//
 //  You should have received a copy of the GNU General Public License
-//  along with ECOGEN (file LICENSE).  
+//  along with ECOGEN (file LICENSE).
 //  If not, see <http://www.gnu.org/licenses/>.
 
 //! \file      ModEuler.cpp
@@ -239,7 +239,7 @@ void ModEuler::solveRiemannInflow(Cell &cellLeft, const int &numberPhases, const
 
   u0 = m0 / rhok0[0];
   H0 = eos->computeTotalEnthalpy(rhok0[0], pk0[0], u0);
-  
+
   //General EOS version
   //-------------------
   int iteration(0);
@@ -302,7 +302,7 @@ void ModEuler::solveRiemannInflow(Cell &cellLeft, const int &numberPhases, const
 
 //****************************************************************************
 
-void ModEuler::solveRiemannTank(Cell &cellLeft, const int &numberPhases, const double &dxLeft, double &dtMax, const double *ak0, const double *rhok0, const double &p0, const double &T0) const
+void ModEuler::solveRiemannTank(Cell &cellLeft, const int &numberPhases, const double &dxLeft, double &dtMax, double *ak0, double *rhok0, double &p0, double &T0)
 {
   Eos *eos;
 
@@ -326,7 +326,7 @@ void ModEuler::solveRiemannTank(Cell &cellLeft, const int &numberPhases, const d
   //----------------------------------------------
   pStar = p0;
   double v(0.), vmv0, mL, u;
-  v = 1./eos->computeDensityIsentropic(pL, rhoL, pStar); 
+  v = 1./eos->computeDensityIsentropic(pL, rhoL, pStar);
   //v = 1. / eos->computeDensityHugoniot(pL, rhoL, pStar); //Other possibility
   vmv0 = v - 1. / rhoL;
   if (abs(vmv0) > 1e-10) { mL = sqrt((pL - p0) / vmv0); }
@@ -359,7 +359,7 @@ void ModEuler::solveRiemannTank(Cell &cellLeft, const int &numberPhases, const d
     double v0 = 0.;
     H0 = eos->computeTotalEnthalpy(rhok0[0], p0, v0);
 
-    //ITERATIVE PROCESS FOR PRESSURE DETERMINATION 
+    //ITERATIVE PROCESS FOR PRESSURE DETERMINATION
     //--------------------------------------------
     int iteration(0);
     double p(0.5*p0);
@@ -424,7 +424,7 @@ void ModEuler::solveRiemannTank(Cell &cellLeft, const int &numberPhases, const d
 
 //****************************************************************************
 
-void ModEuler::solveRiemannOutflow(Cell &cellLeft, const int &numberPhases, const double &dxLeft, double &dtMax, const double p0, double *debitSurf) const
+void ModEuler::solveRiemannOutflow(Cell &cellLeft, const int &numberPhases, const double &dxLeft, double &dtMax, double p0, double *debitSurf) 
 {
   double cL, sL, zL;
   double uL, pL, rhoL, vL, wL;
@@ -470,7 +470,7 @@ void ModEuler::solveRiemannOutflow(Cell &cellLeft, const int &numberPhases, cons
   //Contact discontinuity velocity
   fluxBufferEuler.m_sM = uStar;
 
-  //Specific mass flow rate output (kg/s/m²)
+  //Specific mass flow rate output (kg/s/mï¿½)
   debitSurf[0] = fluxBufferEuler.m_masse;
 }
 

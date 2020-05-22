@@ -1,30 +1,30 @@
-//  
-//       ,---.     ,--,    .---.     ,--,    ,---.    .-. .-. 
-//       | .-'   .' .')   / .-. )  .' .'     | .-'    |  \| | 
-//       | `-.   |  |(_)  | | |(_) |  |  __  | `-.    |   | | 
-//       | .-'   \  \     | | | |  \  \ ( _) | .-'    | |\  | 
-//       |  `--.  \  `-.  \ `-' /   \  `-) ) |  `--.  | | |)| 
-//       /( __.'   \____\  )---'    )\____/  /( __.'  /(  (_) 
-//      (__)              (_)      (__)     (__)     (__)     
+//
+//       ,---.     ,--,    .---.     ,--,    ,---.    .-. .-.
+//       | .-'   .' .')   / .-. )  .' .'     | .-'    |  \| |
+//       | `-.   |  |(_)  | | |(_) |  |  __  | `-.    |   | |
+//       | .-'   \  \     | | | |  \  \ ( _) | .-'    | |\  |
+//       |  `--.  \  `-.  \ `-' /   \  `-) ) |  `--.  | | |)|
+//       /( __.'   \____\  )---'    )\____/  /( __.'  /(  (_)
+//      (__)              (_)      (__)     (__)     (__)
 //
 //  This file is part of ECOGEN.
 //
-//  ECOGEN is the legal property of its developers, whose names 
-//  are listed in the copyright file included with this source 
+//  ECOGEN is the legal property of its developers, whose names
+//  are listed in the copyright file included with this source
 //  distribution.
 //
 //  ECOGEN is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published 
-//  by the Free Software Foundation, either version 3 of the License, 
+//  it under the terms of the GNU General Public License as published
+//  by the Free Software Foundation, either version 3 of the License,
 //  or (at your option) any later version.
-//  
+//
 //  ECOGEN is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 //  GNU General Public License for more details.
-//  
+//
 //  You should have received a copy of the GNU General Public License
-//  along with ECOGEN (file LICENSE).  
+//  along with ECOGEN (file LICENSE).
 //  If not, see <http://www.gnu.org/licenses/>.
 
 //! \file      Run.cpp
@@ -64,8 +64,7 @@ void Run::initialize(int argc, char* argv[])
 
   //2) Reading input file (XML format)
   //----------------------------------
-  vector<GeometricalDomain*> domains;
-  vector<BoundCond*> boundCond;
+
   try {
     m_input = new Input(this);
     m_input->lectureInputXML(domains, boundCond);
@@ -123,7 +122,7 @@ void Run::initialize(int argc, char* argv[])
 
 	//9) AMR initialization
 	//---------------------
-  m_mesh->procedureRaffinementInitialization(m_cellsLvl, m_boundariesLvl, m_addPhys, m_model, m_nbCellsTotalAMR, domains, m_cells, m_eos, m_resumeSimulation);
+//  m_mesh->procedureRaffinementInitialization(m_cellsLvl, m_boundariesLvl, m_addPhys, m_model, m_nbCellsTotalAMR, domains, m_cells, m_eos, m_resumeSimulation);
 
   for (unsigned int d = 0; d < domains.size(); d++) { delete domains[d]; }
 
@@ -139,7 +138,7 @@ void Run::initialize(int argc, char* argv[])
     try { this->resumeSimulation(m_iteration, m_dt, m_physicalTime); }
     catch (ErrorECOGEN &) { throw; }
   }
-  
+
   //12) Printing t0 solution
   //------------------------
   if (m_resumeSimulation == 0) {
@@ -176,7 +175,7 @@ void Run::resumeSimulation(int &iteration, double &dt, double &tempsPhysique)
 
   //Complete fluid state with additional calculations (sound speed, energies, mixture variables, etc.)
   for (int i = 0; i < m_mesh->getNumberCells(); i++) {
-    m_cells[i]->completeFulfillState(resume); 
+    m_cells[i]->completeFulfillState(resume);
   }
 
   if (m_mesh->getType() == AMR) {
@@ -217,7 +216,7 @@ void Run::solver()
       this->verifyErrors();
     }
     catch (ErrorECOGEN &) { throw; }
-		
+
     //------------------- INTEGRATION PROCEDURE -------------------
 
     //Setting cons variable to zero for spatial scheme on dU/dt: no need for time step at this point
@@ -261,7 +260,7 @@ void Run::solver()
       print = false;
     }
     //Printing probes data
-    for (unsigned int p = 0; p < m_probes.size(); p++) { 
+    for (unsigned int p = 0; p < m_probes.size(); p++) {
       if((m_probes[p]->possesses()) && m_probes[p]->getNextTime()<=m_physicalTime) m_probes[p]->ecritSolution(m_mesh, m_cellsLvl);
     }
 
@@ -282,11 +281,11 @@ void Run::integrationProcedure(double &dt, int lvl, double &dtMax, int &nbCellsT
 {
   //1) AMR Level time step determination
   double dtLvl = dt * pow(2., -(double)lvl);
-  
+
   //2) (Un)Reffinement procedure
-  if (m_lvlMax > 0) { 
+  if (m_lvlMax > 0) {
     m_stat.startAMRTime();
-    m_mesh->procedureRaffinement(m_cellsLvl, m_boundariesLvl, lvl, m_addPhys, m_model, nbCellsTotalAMR, m_cells, m_eos); 
+    m_mesh->procedureRaffinement(m_cellsLvl, m_boundariesLvl, lvl, m_addPhys, m_model, nbCellsTotalAMR, m_cells, m_eos);
     m_stat.endAMRTime();
   }
 
@@ -295,7 +294,7 @@ void Run::integrationProcedure(double &dt, int lvl, double &dtMax, int &nbCellsT
     for (unsigned int i = 0; i < m_boundariesLvl[lvl].size(); i++) { if (!m_boundariesLvl[lvl][i]->getSplit()) { m_boundariesLvl[lvl][i]->computeSlopes(m_numberPhases, m_numberTransports); } }
     if (Ncpu > 1) {
       m_mesh->communicationsSlopes(m_cells, lvl);
-      if (lvl > 0) { m_mesh->communicationsSlopes(m_cells, lvl - 1); } 
+      if (lvl > 0) { m_mesh->communicationsSlopes(m_cells, lvl - 1); }
     }
   }
   if (lvl < m_lvlMax) {
@@ -305,7 +304,7 @@ void Run::integrationProcedure(double &dt, int lvl, double &dtMax, int &nbCellsT
     //4) Recursive call for level up integration procedure
     this->integrationProcedure(dt, lvl + 1, dtMax, nbCellsTotalAMR);
   }
-  
+
   //5) Advancement procedure
   this->advancingProcedure(dtLvl, lvl, dtMax);
 
@@ -353,7 +352,7 @@ void Run::solveHyperbolicO2(double &dt, int &lvl, double &dtMax) const
   //2) Spatial second order scheme
   //------------------------------
   //Fluxes are determined at each cells interfaces and stored in the m_cons variableof corresponding cells. Hyperbolic maximum time step determination
-  for (unsigned int i = 0; i < m_boundariesLvl[lvl].size(); i++) { if (!m_boundariesLvl[lvl][i]->getSplit()) { m_boundariesLvl[lvl][i]->computeFlux(m_numberPhases, m_numberTransports, dtMax, *m_globalLimiter, *m_interfaceLimiter, *m_globalVolumeFractionLimiter, *m_interfaceVolumeFractionLimiter); } }
+  for (unsigned int i = 0; i < m_boundariesLvl[lvl].size(); i++) { if (!m_boundariesLvl[lvl][i]->getSplit()) { m_boundariesLvl[lvl][i]->computeFlux(m_numberPhases, m_numberTransports, dtMax, *m_globalLimiter, *m_interfaceLimiter, *m_globalVolumeFractionLimiter, *m_interfaceVolumeFractionLimiter, m_physicalTime); } }
 
   //3)Prediction step using slopes
   //------------------------------
@@ -378,7 +377,7 @@ void Run::solveHyperbolicO2(double &dt, int &lvl, double &dtMax) const
   //7) Spatial scheme on predicted variables
   //----------------------------------------
   //Fluxes are determined at each cells interfaces and stored in the m_cons variableof corresponding cells. Hyperbolic maximum time step determination
-  for (unsigned int i = 0; i < m_boundariesLvl[lvl].size(); i++) { if (!m_boundariesLvl[lvl][i]->getSplit()) { m_boundariesLvl[lvl][i]->computeFlux(m_numberPhases, m_numberTransports, dtMax, *m_globalLimiter, *m_interfaceLimiter, *m_globalVolumeFractionLimiter, *m_interfaceVolumeFractionLimiter, vecPhasesO2); } }
+  for (unsigned int i = 0; i < m_boundariesLvl[lvl].size(); i++) { if (!m_boundariesLvl[lvl][i]->getSplit()) { m_boundariesLvl[lvl][i]->computeFlux(m_numberPhases, m_numberTransports, dtMax, *m_globalLimiter, *m_interfaceLimiter, *m_globalVolumeFractionLimiter, *m_interfaceVolumeFractionLimiter, m_physicalTime, vecPhasesO2); } }
 
   //8) Time evolution
   //-----------------
@@ -398,7 +397,7 @@ void Run::solveHyperbolic(double &dt, int &lvl, double &dtMax) const
   //1) Spatial scheme
   //-----------------
   //Fluxes are determined at each cells interfaces and stored in the m_cons variableof corresponding cells. Hyperbolic maximum time step determination
-  for (unsigned int i = 0; i < m_boundariesLvl[lvl].size(); i++) { if (!m_boundariesLvl[lvl][i]->getSplit()) { m_boundariesLvl[lvl][i]->computeFlux(m_numberPhases, m_numberTransports, dtMax, *m_globalLimiter, *m_interfaceLimiter, *m_globalVolumeFractionLimiter, *m_interfaceVolumeFractionLimiter); } }
+  for (unsigned int i = 0; i < m_boundariesLvl[lvl].size(); i++) { if (!m_boundariesLvl[lvl][i]->getSplit()) { m_boundariesLvl[lvl][i]->computeFlux(m_numberPhases, m_numberTransports, dtMax, *m_globalLimiter, *m_interfaceLimiter, *m_globalVolumeFractionLimiter, *m_interfaceVolumeFractionLimiter, m_physicalTime); } }
 
   //2) Time evolution
   //-----------------
@@ -456,10 +455,10 @@ void Run::solveSourceTerms(double &dt, int &lvl) const
 
 void Run::solveRelaxations(int &lvl) const
 {
-  for (unsigned int i = 0; i < m_cellsLvl[lvl].size(); i++) { 
-    if (!m_cellsLvl[lvl][i]->getSplit()) { 
+  for (unsigned int i = 0; i < m_cellsLvl[lvl].size(); i++) {
+    if (!m_cellsLvl[lvl][i]->getSplit()) {
 		m_model->relaxations(m_cellsLvl[lvl][i], m_numberPhases);
-    } 
+    }
   }
   //Reset of colour function (transports) using volume fraction
   for (unsigned int pa = 0; pa < m_addPhys.size(); pa++) { m_addPhys[pa]->reinitializeColorFunction(m_cellsLvl, lvl); }
@@ -521,7 +520,7 @@ void Run::finalize()
   delete m_mesh;
   delete m_model;
   delete m_globalLimiter; delete m_interfaceLimiter; delete m_globalVolumeFractionLimiter; delete m_interfaceVolumeFractionLimiter;
-  delete m_input; 
+  delete m_input;
   delete m_outPut;
   for (unsigned int s = 0; s < m_cuts.size(); s++) { delete m_cuts[s]; }
   //Desallocations AMR

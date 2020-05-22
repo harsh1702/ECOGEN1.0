@@ -1,30 +1,30 @@
-//  
-//       ,---.     ,--,    .---.     ,--,    ,---.    .-. .-. 
-//       | .-'   .' .')   / .-. )  .' .'     | .-'    |  \| | 
-//       | `-.   |  |(_)  | | |(_) |  |  __  | `-.    |   | | 
-//       | .-'   \  \     | | | |  \  \ ( _) | .-'    | |\  | 
-//       |  `--.  \  `-.  \ `-' /   \  `-) ) |  `--.  | | |)| 
-//       /( __.'   \____\  )---'    )\____/  /( __.'  /(  (_) 
-//      (__)              (_)      (__)     (__)     (__)     
+//
+//       ,---.     ,--,    .---.     ,--,    ,---.    .-. .-.
+//       | .-'   .' .')   / .-. )  .' .'     | .-'    |  \| |
+//       | `-.   |  |(_)  | | |(_) |  |  __  | `-.    |   | |
+//       | .-'   \  \     | | | |  \  \ ( _) | .-'    | |\  |
+//       |  `--.  \  `-.  \ `-' /   \  `-) ) |  `--.  | | |)|
+//       /( __.'   \____\  )---'    )\____/  /( __.'  /(  (_)
+//      (__)              (_)      (__)     (__)     (__)
 //
 //  This file is part of ECOGEN.
 //
-//  ECOGEN is the legal property of its developers, whose names 
-//  are listed in the copyright file included with this source 
+//  ECOGEN is the legal property of its developers, whose names
+//  are listed in the copyright file included with this source
 //  distribution.
 //
 //  ECOGEN is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published 
-//  by the Free Software Foundation, either version 3 of the License, 
+//  it under the terms of the GNU General Public License as published
+//  by the Free Software Foundation, either version 3 of the License,
 //  or (at your option) any later version.
-//  
+//
 //  ECOGEN is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 //  GNU General Public License for more details.
-//  
+//
 //  You should have received a copy of the GNU General Public License
-//  along with ECOGEN (file LICENSE).  
+//  along with ECOGEN (file LICENSE).
 //  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef MODEULER_H
@@ -59,11 +59,11 @@ class ModEuler : public Model
 
     //Hydrodynamic Riemann solvers
     //----------------------------
-    virtual void solveRiemannIntern(Cell &cellLeft, Cell &cellRight, const int &numberPhases, const double &dxLeft, const double &dxRight, double &dtMax) const; 
-    virtual void solveRiemannWall(Cell &cellLeft, const int &numberPhases, const double &dxLeft, double &dtMax) const; 
+    virtual void solveRiemannIntern(Cell &cellLeft, Cell &cellRight, const int &numberPhases, const double &dxLeft, const double &dxRight, double &dtMax) const;
+    virtual void solveRiemannWall(Cell &cellLeft, const int &numberPhases, const double &dxLeft, double &dtMax) const;
     virtual void solveRiemannInflow(Cell &cellLeft, const int &numberPhases, const double &dxLeft, double &dtMax, const double m0, const double *ak0, const double *rhok0, const double *pk0) const;
-    virtual void solveRiemannTank(Cell &cellLeft, const int &numberPhases, const double &dxLeft, double &dtMax, const double *ak0, const double *rhok0, const double &p0, const double &T0) const;
-    virtual void solveRiemannOutflow(Cell &cellLeft, const int &numberPhases, const double &dxLeft, double &dtMax, const double p0, double *debitSurf) const; 
+    virtual void solveRiemannTank(Cell &cellLeft, const int &numberPhases, const double &dxLeft, double &dtMax, double *ak0, double *rhok0, double &p0, double &T0) ;
+    virtual void solveRiemannOutflow(Cell &cellLeft, const int &numberPhases, const double &dxLeft, double &dtMax, double p0, double *debitSurf);
 
     virtual void reverseProjection(const Coord normal, const Coord tangent, const Coord binormal) const;
 
@@ -73,7 +73,7 @@ class ModEuler : public Model
     virtual Coord getVelocity(Cell *cell) const;
 
     virtual std::string whoAmI() const;
-  
+
   protected:
 
   private:

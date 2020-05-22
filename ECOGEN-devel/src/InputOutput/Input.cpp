@@ -1,30 +1,30 @@
-//  
-//       ,---.     ,--,    .---.     ,--,    ,---.    .-. .-. 
-//       | .-'   .' .')   / .-. )  .' .'     | .-'    |  \| | 
-//       | `-.   |  |(_)  | | |(_) |  |  __  | `-.    |   | | 
-//       | .-'   \  \     | | | |  \  \ ( _) | .-'    | |\  | 
-//       |  `--.  \  `-.  \ `-' /   \  `-) ) |  `--.  | | |)| 
-//       /( __.'   \____\  )---'    )\____/  /( __.'  /(  (_) 
-//      (__)              (_)      (__)     (__)     (__)     
+//
+//       ,---.     ,--,    .---.     ,--,    ,---.    .-. .-.
+//       | .-'   .' .')   / .-. )  .' .'     | .-'    |  \| |
+//       | `-.   |  |(_)  | | |(_) |  |  __  | `-.    |   | |
+//       | .-'   \  \     | | | |  \  \ ( _) | .-'    | |\  |
+//       |  `--.  \  `-.  \ `-' /   \  `-) ) |  `--.  | | |)|
+//       /( __.'   \____\  )---'    )\____/  /( __.'  /(  (_)
+//      (__)              (_)      (__)     (__)     (__)
 //
 //  This file is part of ECOGEN.
 //
-//  ECOGEN is the legal property of its developers, whose names 
-//  are listed in the copyright file included with this source 
+//  ECOGEN is the legal property of its developers, whose names
+//  are listed in the copyright file included with this source
 //  distribution.
 //
 //  ECOGEN is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published 
-//  by the Free Software Foundation, either version 3 of the License, 
+//  it under the terms of the GNU General Public License as published
+//  by the Free Software Foundation, either version 3 of the License,
 //  or (at your option) any later version.
-//  
+//
 //  ECOGEN is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 //  GNU General Public License for more details.
-//  
+//
 //  You should have received a copy of the GNU General Public License
-//  along with ECOGEN (file LICENSE).  
+//  along with ECOGEN (file LICENSE).
 //  If not, see <http://www.gnu.org/licenses/>.
 
 //! \file      Input.cpp
@@ -36,6 +36,8 @@
 #include "HeaderInputOutput.h"
 #include <iostream>
 #include "../Meshes/stretchZone.h"
+
+#include <fstream>
 
 using namespace std;
 using namespace tinyxml2;
@@ -91,7 +93,7 @@ void Input::entreeMain(string casTest)
     XMLDocument xmlMain;
     XMLError error(xmlMain.LoadFile(fileName.str().c_str())); //Le file est parse ici
     if (error != XML_SUCCESS) throw ErrorXML(fileName.str(),__FILE__, __LINE__);
-    
+
     //2) Recuperation des donnees principales du compute
     //-------------------------------------------------
     //Recuperation racine du document XML
@@ -140,7 +142,7 @@ void Input::entreeMain(string casTest)
       m_run->m_probes.push_back(new OutputProbeGNU(casTest, xmlText->Value(), element, fileName.str(), this));
       element = element->NextSiblingElement("probe");
     }
-    
+
     //Recuperation Iteration / temps Physique
     element = computationParam->FirstChildElement("timeControlMode");
     if (element == NULL) throw ErrorXMLElement("timeControlMode", fileName.str(), __FILE__, __LINE__);
@@ -252,7 +254,7 @@ void Input::entreeMain(string casTest)
 
     //Reprise de Calcul depuis file resultat
     element = computationParam->FirstChildElement("resumeSimulation");
-    if (element != NULL) { 
+    if (element != NULL) {
       error = element->QueryIntAttribute("fileNumber", &m_run->m_resumeSimulation);
       if (error != XML_NO_ERROR) throw ErrorXMLAttribut("number", fileName.str(), __FILE__, __LINE__);
     }
@@ -342,7 +344,7 @@ void Input::entreeMesh(string casTest)
       error = element->QueryIntAttribute("z", &nbZ);
       if (error != XML_NO_ERROR) throw ErrorXMLAttribut("z", fileName.str(), __FILE__, __LINE__);
       if (nbZ > 1 && nbY <= 1) throw ErrorXMLAttribut("Number of cells in the z-direction can't be superior to 1 if number of cells in the y-direction is equal to 1", fileName.str(), __FILE__, __LINE__);
-      
+
       //Stretching data
       vector<stretchZone> stretchX, stretchY, stretchZ;
       element = cartesianMesh->FirstChildElement("meshStretching");
@@ -476,14 +478,14 @@ void Input::entreeModel(string casTest)
     //Switch selon model
     bool alphaNull(false);
     if (model == "EULER"){ m_run->m_model = new ModEuler(m_run->m_numberTransports); m_run->m_numberPhases = 1; }
-    else if (model == "EULERHOMOGENEOUS") { 
+    else if (model == "EULERHOMOGENEOUS") {
       int liquid, vapor;
       error = element->QueryIntAttribute("liquid", &liquid);
       error = element->QueryIntAttribute("vapor", &vapor);
-      m_run->m_model = new ModEulerHomogeneous(m_run->m_numberTransports, liquid, vapor); m_run->m_numberPhases = 2; 
+      m_run->m_model = new ModEulerHomogeneous(m_run->m_numberTransports, liquid, vapor); m_run->m_numberPhases = 2;
     }
     else if (model == "KAPILA")
-    { 
+    {
       error = element->QueryIntAttribute("numberPhases", &m_run->m_numberPhases);
       m_run->m_model = new ModKapila(m_run->m_numberTransports, m_run->m_numberPhases);
       if (error != XML_NO_ERROR) throw ErrorXMLAttribut("numberPhases", fileName.str(), __FILE__, __LINE__);
@@ -505,7 +507,7 @@ void Input::entreeModel(string casTest)
     else { throw ErrorXMLDev(fileName.str(), __FILE__, __LINE__); }
     if (m_run->m_globalVolumeFractionLimiter->AmITHINC() && (m_run->m_numberPhases != 2)) { throw ErrorXMLAttribut("Limiter THINC only works for 2 phases", fileName.str(), __FILE__, __LINE__); }
     if (m_run->m_interfaceVolumeFractionLimiter->AmITHINC() && (m_run->m_numberPhases != 2)) { throw ErrorXMLAttribut("Limiter THINC only works for 2 phases", fileName.str(), __FILE__, __LINE__); }
-    
+
     //Thermodynamique
     vector<string> nameEOS;
     int EOSTrouvee(0);
@@ -550,7 +552,7 @@ void Input::entreeModel(string casTest)
       if (typeAddPhys == "") throw ErrorXMLAttribut("type", fileName.str(), __FILE__, __LINE__);
       Tools::uppercase(typeAddPhys);
       //switch sur le type de physique additionelle
-      if (typeAddPhys == "SURFACETENSION") { 
+      if (typeAddPhys == "SURFACETENSION") {
         //switch model d ecoulement
         if (model == "KAPILA") { m_run->m_addPhys.push_back(new APKSurfaceTension(element, numberGPA, m_run->m_nameGTR, nameEOS, fileName.str())); }
         else { throw ErrorXMLDev(fileName.str(), __FILE__, __LINE__); }
@@ -744,7 +746,7 @@ void Input::entreeConditionsInitiales(string casTest, vector<GeometricalDomain*>
         Tools::uppercase(typeMateriau);
 
         //LECTURE FLUIDE
-        if (typeMateriau == "FLUIDE") { 
+        if (typeMateriau == "FLUIDE") {
           nbMateriauxEtat++;
           //Recuperation de l EOS
           nameEOS = material->Attribute("EOS");
@@ -761,7 +763,7 @@ void Input::entreeConditionsInitiales(string casTest, vector<GeometricalDomain*>
           else if (m_run->m_model->whoAmI() == "EULERHOMOGENEOUS") { statesPhases.push_back(new PhaseEulerHomogeneous(material, m_run->m_eos[e], fileName.str())); }
           else { throw ErrorXMLElement("Not valid Model-Fluide coupling", fileName.str(), __FILE__, __LINE__); }
         }
-        
+
         //MATERIAU INCONNU
         else { throw ErrorXMLMateriauInconnu(typeMateriau, fileName.str(), __FILE__, __LINE__); } //Cas ou le type de material n a pas ete implemente
         material = material->NextSiblingElement("material");
@@ -789,7 +791,7 @@ void Input::entreeConditionsInitiales(string casTest, vector<GeometricalDomain*>
 
       //C)Reading optional physical entity
       //**********************************
-      int physicalEntity(element->IntAttribute("physicalEntity")); //Default value: 0      
+      int physicalEntity(element->IntAttribute("physicalEntity")); //Default value: 0
 
       //C)Reading domain type
       //*********************

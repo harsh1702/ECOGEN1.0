@@ -1,30 +1,30 @@
-//  
-//       ,---.     ,--,    .---.     ,--,    ,---.    .-. .-. 
-//       | .-'   .' .')   / .-. )  .' .'     | .-'    |  \| | 
-//       | `-.   |  |(_)  | | |(_) |  |  __  | `-.    |   | | 
-//       | .-'   \  \     | | | |  \  \ ( _) | .-'    | |\  | 
-//       |  `--.  \  `-.  \ `-' /   \  `-) ) |  `--.  | | |)| 
-//       /( __.'   \____\  )---'    )\____/  /( __.'  /(  (_) 
-//      (__)              (_)      (__)     (__)     (__)     
+//
+//       ,---.     ,--,    .---.     ,--,    ,---.    .-. .-.
+//       | .-'   .' .')   / .-. )  .' .'     | .-'    |  \| |
+//       | `-.   |  |(_)  | | |(_) |  |  __  | `-.    |   | |
+//       | .-'   \  \     | | | |  \  \ ( _) | .-'    | |\  |
+//       |  `--.  \  `-.  \ `-' /   \  `-) ) |  `--.  | | |)|
+//       /( __.'   \____\  )---'    )\____/  /( __.'  /(  (_)
+//      (__)              (_)      (__)     (__)     (__)
 //
 //  This file is part of ECOGEN.
 //
-//  ECOGEN is the legal property of its developers, whose names 
-//  are listed in the copyright file included with this source 
+//  ECOGEN is the legal property of its developers, whose names
+//  are listed in the copyright file included with this source
 //  distribution.
 //
 //  ECOGEN is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published 
-//  by the Free Software Foundation, either version 3 of the License, 
+//  it under the terms of the GNU General Public License as published
+//  by the Free Software Foundation, either version 3 of the License,
 //  or (at your option) any later version.
-//  
+//
 //  ECOGEN is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 //  GNU General Public License for more details.
-//  
+//
 //  You should have received a copy of the GNU General Public License
-//  along with ECOGEN (file LICENSE).  
+//  along with ECOGEN (file LICENSE).
 //  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef RUN_H
@@ -71,6 +71,9 @@ class Run
     Run(std::string nameCasTest, const int &number);
     virtual ~Run();
 
+    std::vector<GeometricalDomain*> domains;
+    std::vector<BoundCond*> boundCond;
+
     //! \brief    Initialization of the simulation
     void initialize(int argc, char* argv[]);
     //! \brief    Hyperbolic resolution + Relaxations + Source terms integration
@@ -79,13 +82,13 @@ class Run
     //! \brief    Cleaning simulation
     //! \details  Memory desallocations
     void finalize();
-    
+
     void resumeSimulation(int &iteration, double &dt, double &tempsPhysique);
 
     //Accessors
     int getNumberPhases() const;
 
-  private:   
+  private:
 
     //Specific solvers
     void integrationProcedure(double &dt, int lvl, double &dtMax, int &nbCellsTotalAMR);
@@ -122,7 +125,7 @@ class Run
 
     //Geometrical attributes
     bool m_parallelPreTreatment;               //!<Choice for mesh parallel pre-treatment  (needed for first simulation on a new parallel unstructured geometry)
-    
+
     //Calcul attributes
     Mesh *m_mesh;                              //!<Mesh type object: contains all geometrical properties of the simulation
     Model *m_model;                            //!<Model type object: contains the flow model methods
@@ -152,6 +155,9 @@ class Run
     std::vector<Output *> m_probes;            //!<Vector of output objects for probes
     timeStats m_stat;                          //!<Object linked to computational time statistics
     double *m_pMax, *m_pMaxWall;             //!<Maximal pressure found between each written output and its corresponding coordinate (only for few test case)
+
+    //variable inlet conditions
+    //void changeentreeConditionsInitiales(std::vector<BoundCond*> &boundCond);
 
     friend class Input;
     friend class Output;

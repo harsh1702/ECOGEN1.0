@@ -1,30 +1,30 @@
-//  
-//       ,---.     ,--,    .---.     ,--,    ,---.    .-. .-. 
-//       | .-'   .' .')   / .-. )  .' .'     | .-'    |  \| | 
-//       | `-.   |  |(_)  | | |(_) |  |  __  | `-.    |   | | 
-//       | .-'   \  \     | | | |  \  \ ( _) | .-'    | |\  | 
-//       |  `--.  \  `-.  \ `-' /   \  `-) ) |  `--.  | | |)| 
-//       /( __.'   \____\  )---'    )\____/  /( __.'  /(  (_) 
-//      (__)              (_)      (__)     (__)     (__)     
+//
+//       ,---.     ,--,    .---.     ,--,    ,---.    .-. .-.
+//       | .-'   .' .')   / .-. )  .' .'     | .-'    |  \| |
+//       | `-.   |  |(_)  | | |(_) |  |  __  | `-.    |   | |
+//       | .-'   \  \     | | | |  \  \ ( _) | .-'    | |\  |
+//       |  `--.  \  `-.  \ `-' /   \  `-) ) |  `--.  | | |)|
+//       /( __.'   \____\  )---'    )\____/  /( __.'  /(  (_)
+//      (__)              (_)      (__)     (__)     (__)
 //
 //  This file is part of ECOGEN.
 //
-//  ECOGEN is the legal property of its developers, whose names 
-//  are listed in the copyright file included with this source 
+//  ECOGEN is the legal property of its developers, whose names
+//  are listed in the copyright file included with this source
 //  distribution.
 //
 //  ECOGEN is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published 
-//  by the Free Software Foundation, either version 3 of the License, 
+//  it under the terms of the GNU General Public License as published
+//  by the Free Software Foundation, either version 3 of the License,
 //  or (at your option) any later version.
-//  
+//
 //  ECOGEN is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 //  GNU General Public License for more details.
-//  
+//
 //  You should have received a copy of the GNU General Public License
-//  along with ECOGEN (file LICENSE).  
+//  along with ECOGEN (file LICENSE).
 //  If not, see <http://www.gnu.org/licenses/>.
 
 //! \file      ModMultiP.cpp
@@ -319,7 +319,7 @@ void ModMultiP::solveRiemannInflow(Cell &cellLeft, const int &numberPhases, cons
 
 //****************************************************************************
 
-void ModMultiP::solveRiemannTank(Cell &cellLeft, const int &numberPhases, const double &dxLeft, double &dtMax, const double *ak0, const double *rhok0, const double &p0, const double &T0) const
+void ModMultiP::solveRiemannTank(Cell &cellLeft, const int &numberPhases, const double &dxLeft, double &dtMax, double *ak0, double *rhok0, double &p0, double &T0)
 {
   double sL, zL, sM, vmv0, mL;
   double pStar(0.), uStar(0.), rhoStar(0.), vStar(0.), uyStar(0.), uzStar(0.);
@@ -382,7 +382,7 @@ void ModMultiP::solveRiemannTank(Cell &cellLeft, const int &numberPhases, const 
       TB->Yk0[k] = ak0[k] * rhok0[k] / rho0;
       H0 += TB->Yk0[k] * TB->eos[k]->computeTotalEnthalpy(rhok0[k], p0, v0);  //default zero velocity in tank
     }
-    //ITERATIVE PROCESS FOR PRESSURE DETERMINATION 
+    //ITERATIVE PROCESS FOR PRESSURE DETERMINATION
     //--------------------------------------------
     int iteration(0);
     double p(0.5*p0);
@@ -436,7 +436,7 @@ void ModMultiP::solveRiemannTank(Cell &cellLeft, const int &numberPhases, const 
     pStar = p;
     uStar = 0.5*(uStarL + uStarR);
     rhoStar = 0.;
-    for (int k = 0; k < numberPhases; k++) { 
+    for (int k = 0; k < numberPhases; k++) {
       TB->YkStar[k] = TB->Yk0[k];
       rhoStar += TB->YkStar[k] / TB->rhokStar[k];
     }
@@ -465,7 +465,7 @@ void ModMultiP::solveRiemannTank(Cell &cellLeft, const int &numberPhases, const 
 
 //****************************************************************************
 
-void ModMultiP::solveRiemannOutflow(Cell &cellLeft, const int &numberPhases, const double &dxLeft, double &dtMax, const double p0, double *debitSurf) const
+void ModMultiP::solveRiemannOutflow(Cell &cellLeft, const int &numberPhases, const double &dxLeft, double &dtMax, double p0, double *debitSurf)
 {
   double sL, sM, zL;
   double pStar(p0), EStar(0.), vStar(0.), uStar(0.);
@@ -530,7 +530,7 @@ void ModMultiP::solveRiemannOutflow(Cell &cellLeft, const int &numberPhases, con
   //Contact discontinuity velocity
   fluxBufferMultiP->m_sM = uStar;
 
-  //Specific mass flow rate output (kg/s/m²)
+  //Specific mass flow rate output (kg/s/mï¿½)
   for (int k = 0; k < numberPhases; k++) {
     debitSurf[k] = fluxBufferMultiP->m_masse[k];
   }

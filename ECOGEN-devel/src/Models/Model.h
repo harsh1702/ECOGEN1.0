@@ -1,30 +1,30 @@
-//  
-//       ,---.     ,--,    .---.     ,--,    ,---.    .-. .-. 
-//       | .-'   .' .')   / .-. )  .' .'     | .-'    |  \| | 
-//       | `-.   |  |(_)  | | |(_) |  |  __  | `-.    |   | | 
-//       | .-'   \  \     | | | |  \  \ ( _) | .-'    | |\  | 
-//       |  `--.  \  `-.  \ `-' /   \  `-) ) |  `--.  | | |)| 
-//       /( __.'   \____\  )---'    )\____/  /( __.'  /(  (_) 
-//      (__)              (_)      (__)     (__)     (__)     
+//
+//       ,---.     ,--,    .---.     ,--,    ,---.    .-. .-.
+//       | .-'   .' .')   / .-. )  .' .'     | .-'    |  \| |
+//       | `-.   |  |(_)  | | |(_) |  |  __  | `-.    |   | |
+//       | .-'   \  \     | | | |  \  \ ( _) | .-'    | |\  |
+//       |  `--.  \  `-.  \ `-' /   \  `-) ) |  `--.  | | |)|
+//       /( __.'   \____\  )---'    )\____/  /( __.'  /(  (_)
+//      (__)              (_)      (__)     (__)     (__)
 //
 //  This file is part of ECOGEN.
 //
-//  ECOGEN is the legal property of its developers, whose names 
-//  are listed in the copyright file included with this source 
+//  ECOGEN is the legal property of its developers, whose names
+//  are listed in the copyright file included with this source
 //  distribution.
 //
 //  ECOGEN is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published 
-//  by the Free Software Foundation, either version 3 of the License, 
+//  it under the terms of the GNU General Public License as published
+//  by the Free Software Foundation, either version 3 of the License,
 //  or (at your option) any later version.
-//  
+//
 //  ECOGEN is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 //  GNU General Public License for more details.
-//  
+//
 //  You should have received a copy of the GNU General Public License
-//  along with ECOGEN (file LICENSE).  
+//  along with ECOGEN (file LICENSE).
 //  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef MODELE_H
@@ -77,7 +77,7 @@ class Model
 
     //Hydrodynamic Riemann solvers
     //----------------------------
-    //! \brief     Cell to cell Riemann solver 
+    //! \brief     Cell to cell Riemann solver
     //! \param     cellLeft          left cell
     //! \param     cellRight         right cell
     //! \param     numberPhases      number of phases
@@ -85,7 +85,7 @@ class Model
     //! \param     dxRight           right characteristic lenght
     //! \param     dtMax             maximum explicit time step
     virtual void solveRiemannIntern(Cell &cellLeft, Cell &cellRight, const int &numberPhases, const double &dxLeft, const double &dxRight, double &dtMax) const { Errors::errorMessage("solveRiemannIntern not available for required model"); };
-    //! \brief     Wall half Riemann solver 
+    //! \brief     Wall half Riemann solver
     //! \param     cellLeft          left cell
     //! \param     numberPhases      number of phases
     //! \param     dxLeft            left characteristic lenght
@@ -96,7 +96,7 @@ class Model
     //! \param     numberPhases      number of phases
     //! \param     dxLeft            left characteristic lenght
     //! \param     dtMax             maximum explicit time step
-    //! \param     m0                specific mass flow rate (kg/s/m²)
+    //! \param     m0                specific mass flow rate (kg/s/mï¿½)
     //! \param     ak0               volume fraction array of injected fluids
     //! \param     rhok0             density array of injected fluids
     //! \param     pk0               pressure array of injected fluids
@@ -109,14 +109,14 @@ class Model
     //! \param     ak0               volume fraction array of fluids in tank
     //! \param     rhok0             density array of fluids in tank
     //! \param     pk0               pressure array of fluids in tank
-    virtual void solveRiemannTank(Cell &cellLeft, const int &numberPhases, const double &dxLeft, double &dtMax, const double *ak0, const double *rhok0, const double &p0, const double &T0) const { Errors::errorMessage("solveRiemannTank not available for required model"); };
+    virtual void solveRiemannTank(Cell &cellLeft, const int &numberPhases, const double &dxLeft, double &dtMax, double *ak0, double *rhok0, double &p0, double &T0) { Errors::errorMessage("solveRiemannTank not available for required model"); };
     //! \brief     Outflow half Riemann solver
     //! \param     cellLeft          left cell
     //! \param     numberPhases      number of phases
     //! \param     dxLeft            left characteristic lenght
     //! \param     dtMax             maximum explicit time step
     //! \param     p0                external pressure
-    virtual void solveRiemannOutflow(Cell &cellLeft, const int &numberPhases, const double &dxLeft, double &dtMax, const double p0, double *debitSurf) const { Errors::errorMessage("solveRiemannOutflow not available for required model"); };
+    virtual void solveRiemannOutflow(Cell &cellLeft, const int &numberPhases, const double &dxLeft, double &dtMax, double p0, double *debitSurf) { Errors::errorMessage("solveRiemannOutflow not available for required model"); };
 
     //Transports Riemann solvers
     //--------------------------
@@ -165,14 +165,14 @@ class Model
     virtual Coord getVelocity(Cell *cell) const { Errors::errorMessage("getVelocity not available for required model"); return 0; };
 
 	std::vector<Relaxation*> *getRelaxations() { return &m_relaxations; };
-    
+
     void printInfo() const;
     virtual std::string whoAmI() const { return 0; };
 
   protected:
     std::string m_name;                        //!< Name of the required model
 	std::vector<Relaxation *> m_relaxations;   //!< Vector of relaxation procedure
-    
+
   private:
 };
 

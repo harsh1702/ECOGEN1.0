@@ -1,30 +1,30 @@
-//  
-//       ,---.     ,--,    .---.     ,--,    ,---.    .-. .-. 
-//       | .-'   .' .')   / .-. )  .' .'     | .-'    |  \| | 
-//       | `-.   |  |(_)  | | |(_) |  |  __  | `-.    |   | | 
-//       | .-'   \  \     | | | |  \  \ ( _) | .-'    | |\  | 
-//       |  `--.  \  `-.  \ `-' /   \  `-) ) |  `--.  | | |)| 
-//       /( __.'   \____\  )---'    )\____/  /( __.'  /(  (_) 
-//      (__)              (_)      (__)     (__)     (__)     
+//
+//       ,---.     ,--,    .---.     ,--,    ,---.    .-. .-.
+//       | .-'   .' .')   / .-. )  .' .'     | .-'    |  \| |
+//       | `-.   |  |(_)  | | |(_) |  |  __  | `-.    |   | |
+//       | .-'   \  \     | | | |  \  \ ( _) | .-'    | |\  |
+//       |  `--.  \  `-.  \ `-' /   \  `-) ) |  `--.  | | |)|
+//       /( __.'   \____\  )---'    )\____/  /( __.'  /(  (_)
+//      (__)              (_)      (__)     (__)     (__)
 //
 //  This file is part of ECOGEN.
 //
-//  ECOGEN is the legal property of its developers, whose names 
-//  are listed in the copyright file included with this source 
+//  ECOGEN is the legal property of its developers, whose names
+//  are listed in the copyright file included with this source
 //  distribution.
 //
 //  ECOGEN is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published 
-//  by the Free Software Foundation, either version 3 of the License, 
+//  it under the terms of the GNU General Public License as published
+//  by the Free Software Foundation, either version 3 of the License,
 //  or (at your option) any later version.
-//  
+//
 //  ECOGEN is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 //  GNU General Public License for more details.
-//  
+//
 //  You should have received a copy of the GNU General Public License
-//  along with ECOGEN (file LICENSE).  
+//  along with ECOGEN (file LICENSE).
 //  If not, see <http://www.gnu.org/licenses/>.
 
 //! \file      BoundCondTank.cpp
@@ -37,6 +37,13 @@
 using namespace std;
 using namespace tinyxml2;
 
+std::vector<double> m_p01Tank;
+std::vector<double> TimePTank;
+std::vector<double> m_T01Tank;
+std::vector<double> TimeTTank;
+
+Eos **eoslocal;
+
 //****************************************************************************
 
 BoundCondTank::BoundCondTank(){}
@@ -46,24 +53,33 @@ BoundCondTank::BoundCondTank(){}
 BoundCondTank::BoundCondTank(int numPhysique, XMLElement *element, int &numberPhases, int &numberTransports, std::vector<std::string> nameTransports, Eos **eos, string fileName) :
   BoundCond(numPhysique)
 {
+  static int reinitializationCount;
   m_numberPhase = numberPhases;
   m_ak0 = new double[m_numberPhase];
   m_Yk0 = new double[m_numberPhase];
-  m_rhok0 = new double[m_numberPhase]; 
-  
+  m_rhok0 = new double[m_numberPhase];
+
   //Reading tank pressure and temperature conditions
   //------------------------------------------------
   XMLElement *sousElement(element->FirstChildElement("dataTank"));
   if (sousElement == NULL) throw ErrorXMLElement("dataTank", fileName, __FILE__, __LINE__);
   //Attributes reading
   XMLError error;
-  error = sousElement->QueryDoubleAttribute("p0", &m_p0);
-  if (error != XML_NO_ERROR) throw ErrorXMLAttribut("p0", fileName, __FILE__, __LINE__);
-  error = sousElement->QueryDoubleAttribute("T0", &m_T0);
-  if (error != XML_NO_ERROR) throw ErrorXMLAttribut("T0", fileName, __FILE__, __LINE__);
+  std::string filep0(sousElement->Attribute("p0"));
+  readFile(filep0,TimePTank,m_p01Tank);
+  std::string fileT0(sousElement->Attribute("T0"));
+  readFile(fileT0,TimeTTank,m_T01Tank);
+
+  eoslocal = eos;
+
+  //equalizes the length of the temperature and pressure vectors
+  // fillVectorData(m_p01Tank,m_T01Tank,TimePTank,TimeTTank);
+
+  m_p0 = m_p01Tank[m_p01Tank.size()-1];
+  m_T0 = m_T01Tank[m_T01Tank.size()-1];
 
   if (m_numberPhase == 1) {
-    m_rhok0[0] = eos[0]->computeDensity(m_p0, m_T0);
+    m_rhok0[0] = eos[0]->computeDensity(m_p01Tank[m_p01Tank.size()-1], m_T01Tank[m_T01Tank.size()-1]);  //assigned the final values as after the last specified time we dont want to needlessly compute density
     m_ak0[0] = 1.;
     m_Yk0[0] = 1.;
   }
@@ -177,8 +193,9 @@ BoundCondTank::BoundCondTank(int numPhysique, XMLElement *element, int &numberPh
 
 //****************************************************************************
 
-BoundCondTank::BoundCondTank(const BoundCondTank &Source, const int lvl) : BoundCond(Source)
+BoundCondTank::BoundCondTank(BoundCondTank &Source, const int lvl) : BoundCond(Source)
 {
+//lvl value is 0
   m_numberPhase = Source.m_numberPhase;
   m_numberTransports = Source.m_numberTransports;
   m_ak0 = new double[m_numberPhase];
@@ -217,14 +234,38 @@ BoundCondTank::~BoundCondTank()
 void BoundCondTank::creeLimite(CellInterface **face)
 {
   *face = new BoundCondTank(*(this));
+
 }
 
 //****************************************************************************
 
-void BoundCondTank::solveRiemannLimite(Cell &cellLeft, const int & numberPhases, const double & dxLeft, double & dtMax)
+void BoundCondTank::solveRiemannLimite(Cell &cellLeft, const int & numberPhases, const double & dxLeft, double & dtMax, double m_physicalTime)
 {
-  Coord omega(0., 0., 500.);
-  m_mod->solveRiemannTank(cellLeft, numberPhases, dxLeft, dtMax, m_ak0, m_rhok0, m_p0, m_T0);
+  unsigned int i(0);
+  double m_rhok0_Solver[2];
+
+  for (i = 0; i < (TimeTTank.size() - 1) ; i++)
+  {
+    if (m_physicalTime < TimeTTank[i])
+    {break;}
+  }
+
+  if (i < (TimeTTank.size() - 1))
+  {
+    m_rhok0_Solver[0] = eoslocal[0]->computeDensity(m_p01Tank[i], m_T01Tank[i]);
+    m_rhok0_Solver[1] = eoslocal[1]->computeDensity(m_p01Tank[i], m_T01Tank[i]);
+
+    Coord omega(0., 0., 500.);
+    m_mod->solveRiemannTank(cellLeft, numberPhases, dxLeft, dtMax, m_ak0, m_rhok0_Solver, m_p01Tank[i], m_T01Tank[i]);
+  }
+  else
+  {
+    m_rhok0_Solver[0] = m_rhok0[0];
+    m_rhok0_Solver[1] = m_rhok0[1];
+
+    Coord omega(0., 0., 500.);
+    m_mod->solveRiemannTank(cellLeft, numberPhases, dxLeft, dtMax, m_ak0, m_rhok0_Solver, m_p0, m_T0);
+  }
   //cout << m_face->getPos().getX() << " " << m_face->getPos().getY() << " " << m_face->getPos().getZ() << endl;
 }
 

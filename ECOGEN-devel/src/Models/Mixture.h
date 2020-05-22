@@ -1,30 +1,30 @@
-//  
-//       ,---.     ,--,    .---.     ,--,    ,---.    .-. .-. 
-//       | .-'   .' .')   / .-. )  .' .'     | .-'    |  \| | 
-//       | `-.   |  |(_)  | | |(_) |  |  __  | `-.    |   | | 
-//       | .-'   \  \     | | | |  \  \ ( _) | .-'    | |\  | 
-//       |  `--.  \  `-.  \ `-' /   \  `-) ) |  `--.  | | |)| 
-//       /( __.'   \____\  )---'    )\____/  /( __.'  /(  (_) 
-//      (__)              (_)      (__)     (__)     (__)     
+//
+//       ,---.     ,--,    .---.     ,--,    ,---.    .-. .-.
+//       | .-'   .' .')   / .-. )  .' .'     | .-'    |  \| |
+//       | `-.   |  |(_)  | | |(_) |  |  __  | `-.    |   | |
+//       | .-'   \  \     | | | |  \  \ ( _) | .-'    | |\  |
+//       |  `--.  \  `-.  \ `-' /   \  `-) ) |  `--.  | | |)|
+//       /( __.'   \____\  )---'    )\____/  /( __.'  /(  (_)
+//      (__)              (_)      (__)     (__)     (__)
 //
 //  This file is part of ECOGEN.
 //
-//  ECOGEN is the legal property of its developers, whose names 
-//  are listed in the copyright file included with this source 
+//  ECOGEN is the legal property of its developers, whose names
+//  are listed in the copyright file included with this source
 //  distribution.
 //
 //  ECOGEN is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published 
-//  by the Free Software Foundation, either version 3 of the License, 
+//  it under the terms of the GNU General Public License as published
+//  by the Free Software Foundation, either version 3 of the License,
 //  or (at your option) any later version.
-//  
+//
 //  ECOGEN is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 //  GNU General Public License for more details.
-//  
+//
 //  You should have received a copy of the GNU General Public License
-//  along with ECOGEN (file LICENSE).  
+//  along with ECOGEN (file LICENSE).
 //  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef MIXTURE_H
@@ -62,10 +62,10 @@ class Mixture
       double computeTsat(const Eos *eosLiq, const Eos *eosVap, const double &pressure, double *dTsat = 0);
 
       //! \brief     Copy mixture attributes in mixture
-      //! \param     mixture      destination mixture variable 
+      //! \param     mixture      destination mixture variable
       virtual void allocateAndCopyMixture(Mixture **mixture) { Errors::errorMessage("allocateAndCopyMixture not available for required mixture"); };
       //! \brief     Copy mixture in mixture attributes
-      //! \param     mixture      source mixture to copy 
+      //! \param     mixture      source mixture to copy
       virtual void copyMixture(Mixture &mixture) { Errors::errorMessage("copyMixture not available for required mixture"); };
       //! \brief     Compute mixture density
       //! \param     alphak             phase volume fraction array
@@ -130,7 +130,7 @@ class Mixture
       //! \brief     Compute mixture internal specific energy from total one taking account for energies associated to extra physics
       //! \param     vecGPA             vector of additional physics variables
       virtual void totalEnergyToInternalEnergy(std::vector<QuantitiesAddPhys*> &vecGPA) { Errors::errorMessage("totalEnergyToInternalEnergy not available for required mixture"); };
-      
+
       //! \brief     velocity vector projection in a local cartesian coordinate system
       //! \param     normal            normal vector associated to the cell boundary
       //! \param     tangent           tangent vector associated to the cell boundary

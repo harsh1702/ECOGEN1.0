@@ -1,0 +1,15 @@
+<?xml version = "1.0" encoding = "UTF-8" standalone = "yes"?>
+<parametersEOS>
+	<EOS fichier="SG_co2liq.xml" type="SG"/>
+	<parameters
+		gamma="1.23"
+		pInf="1.32e8"
+		cv="2440.0"
+		energyRef="-6.23e5"
+		entropyRef="1.09e3">
+	</parameters>
+	<physicalParameters
+		mu="53.107e-6"
+		lambda="0.080593">
+	</physicalParameters>
+</parametersEOS>

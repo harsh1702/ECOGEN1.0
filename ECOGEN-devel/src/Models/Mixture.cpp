@@ -1,30 +1,30 @@
-//  
-//       ,---.     ,--,    .---.     ,--,    ,---.    .-. .-. 
-//       | .-'   .' .')   / .-. )  .' .'     | .-'    |  \| | 
-//       | `-.   |  |(_)  | | |(_) |  |  __  | `-.    |   | | 
-//       | .-'   \  \     | | | |  \  \ ( _) | .-'    | |\  | 
-//       |  `--.  \  `-.  \ `-' /   \  `-) ) |  `--.  | | |)| 
-//       /( __.'   \____\  )---'    )\____/  /( __.'  /(  (_) 
-//      (__)              (_)      (__)     (__)     (__)     
+//
+//       ,---.     ,--,    .---.     ,--,    ,---.    .-. .-.
+//       | .-'   .' .')   / .-. )  .' .'     | .-'    |  \| |
+//       | `-.   |  |(_)  | | |(_) |  |  __  | `-.    |   | |
+//       | .-'   \  \     | | | |  \  \ ( _) | .-'    | |\  |
+//       |  `--.  \  `-.  \ `-' /   \  `-) ) |  `--.  | | |)|
+//       /( __.'   \____\  )---'    )\____/  /( __.'  /(  (_)
+//      (__)              (_)      (__)     (__)     (__)
 //
 //  This file is part of ECOGEN.
 //
-//  ECOGEN is the legal property of its developers, whose names 
-//  are listed in the copyright file included with this source 
+//  ECOGEN is the legal property of its developers, whose names
+//  are listed in the copyright file included with this source
 //  distribution.
 //
 //  ECOGEN is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published 
-//  by the Free Software Foundation, either version 3 of the License, 
+//  it under the terms of the GNU General Public License as published
+//  by the Free Software Foundation, either version 3 of the License,
 //  or (at your option) any later version.
-//  
+//
 //  ECOGEN is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 //  GNU General Public License for more details.
-//  
+//
 //  You should have received a copy of the GNU General Public License
-//  along with ECOGEN (file LICENSE).  
+//  along with ECOGEN (file LICENSE).
 //  If not, see <http://www.gnu.org/licenses/>.
 
 //! \file      Mixture.cpp
@@ -55,7 +55,7 @@ void Mixture::printMixture(std::ofstream &fileStream) const
   //Vector variables
   for (int var = 1; var <= this->getNumberVectors(); var++) {
     fileStream << this->returnVector(var).norm() << " ";
-  } 
+  }
 }
 
 //***************************************************************************
@@ -78,6 +78,18 @@ double Mixture::computeTsat(const Eos *eosLiq, const Eos *eosVap, const double &
   double e0V = eosVap->getERef();
   double s0V = eosVap->getSRef();
 
+  // std::cout << "vapour gamma" <<gammaV<< '\n';
+  // std::cout << "vapour PInf" <<pInfV<< '\n';
+  // std::cout << "vapour cV" <<cvV<< '\n';
+  // std::cout << "vapour energyRef" <<e0V<< '\n';
+  // std::cout << "vapour entropyRef" <<s0V<< '\n';
+  //
+  // std::cout << "Liquid gamma" <<gammaL<< '\n';
+  // std::cout << "Liquid PInf" <<pInfL<< '\n';
+  // std::cout << "Liquid cV" <<cvL<< '\n';
+  // std::cout << "Liquid energyRef" <<e0L<< '\n';
+  // std::cout << "Liquid entropyRef" <<s0L<< '\n';
+
   double A, B, C, D;
   A = (gammaL*cvL - gammaV*cvV + s0V - s0L) / (gammaV*cvV - cvV);
   B = (e0L - e0V) / (gammaV*cvV - cvV);
@@ -89,6 +101,7 @@ double Mixture::computeTsat(const Eos *eosLiq, const Eos *eosVap, const double &
   double Tsat(0.1*B / C);
   double f(0.), df(1.);
   do {
+    //std::cout << "Tsat in iteration" <<Tsat<< '\n';
     Tsat -= f / df; iteration++;
     if (iteration > 50) {
       errors.push_back(Errors("number iterations trop grand dans recherche Tsat", __FILE__, __LINE__));
@@ -96,10 +109,12 @@ double Mixture::computeTsat(const Eos *eosLiq, const Eos *eosVap, const double &
     }
     f = A + B / Tsat + C*log(Tsat) - log(pressure + pInfV) + D*log(pressure + pInfL);
     df = C / Tsat - B / (Tsat*Tsat);
+    //std::cout << "value of f" <<f<< '\n';
   } while (abs(f)>1e-10);
 
   double dfdp = -1. / (pressure + pInfV) + D / (pressure + pInfL);
-  if (dTsat != 0) *dTsat = -dfdp / df;
+  if (dTsat != 0) *dTsat = -(dfdp / df);
+  //std::cout << "dTsat values" <<*dTsat<< '\n';
   return Tsat;
 }
 

@@ -4,7 +4,7 @@
 #Definitions
 EXECUTABLE = ECOGEN
 CXX = mpicxx
-CXXFLAGS = -O3
+CXXFLAGS = -O3 -g
 # LDFLAGS =
 
 dirs = $(shell find . -type d)

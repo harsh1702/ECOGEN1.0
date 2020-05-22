@@ -1,30 +1,30 @@
-//  
-//       ,---.     ,--,    .---.     ,--,    ,---.    .-. .-. 
-//       | .-'   .' .')   / .-. )  .' .'     | .-'    |  \| | 
-//       | `-.   |  |(_)  | | |(_) |  |  __  | `-.    |   | | 
-//       | .-'   \  \     | | | |  \  \ ( _) | .-'    | |\  | 
-//       |  `--.  \  `-.  \ `-' /   \  `-) ) |  `--.  | | |)| 
-//       /( __.'   \____\  )---'    )\____/  /( __.'  /(  (_) 
-//      (__)              (_)      (__)     (__)     (__)     
+//
+//       ,---.     ,--,    .---.     ,--,    ,---.    .-. .-.
+//       | .-'   .' .')   / .-. )  .' .'     | .-'    |  \| |
+//       | `-.   |  |(_)  | | |(_) |  |  __  | `-.    |   | |
+//       | .-'   \  \     | | | |  \  \ ( _) | .-'    | |\  |
+//       |  `--.  \  `-.  \ `-' /   \  `-) ) |  `--.  | | |)|
+//       /( __.'   \____\  )---'    )\____/  /( __.'  /(  (_)
+//      (__)              (_)      (__)     (__)     (__)
 //
 //  This file is part of ECOGEN.
 //
-//  ECOGEN is the legal property of its developers, whose names 
-//  are listed in the copyright file included with this source 
+//  ECOGEN is the legal property of its developers, whose names
+//  are listed in the copyright file included with this source
 //  distribution.
 //
 //  ECOGEN is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published 
-//  by the Free Software Foundation, either version 3 of the License, 
+//  it under the terms of the GNU General Public License as published
+//  by the Free Software Foundation, either version 3 of the License,
 //  or (at your option) any later version.
-//  
+//
 //  ECOGEN is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 //  GNU General Public License for more details.
-//  
+//
 //  You should have received a copy of the GNU General Public License
-//  along with ECOGEN (file LICENSE).  
+//  along with ECOGEN (file LICENSE).
 //  If not, see <http://www.gnu.org/licenses/>.
 
 //! \file      RelaxationPTMU.cpp
@@ -51,7 +51,7 @@ RelaxationPTMu::RelaxationPTMu(XMLElement *element, string fileName)
 	//---------------------
 	m_liq = 0;
 	m_vap = 1;
-	
+
 }
 
 //***********************************************************************
@@ -101,7 +101,7 @@ void RelaxationPTMu::stiffRelaxation(Cell *cell, const int &numberPhases, Prim t
 	double f(0.), df(1.);
 	do {
 		pStar -= f / df; iteration++;
-		if (iteration > 50) {
+		if (iteration > 1000) {
 			errors.push_back(Errors("number iterations trop grand dans relaxPTMu", __FILE__, __LINE__));
 			cout << "info cell problematic" << endl;
 			cout << "Liq " << TL << " " << TB->rhok[m_liq] << " " << cell->getMixture()->getPressure() << endl;
@@ -116,6 +116,7 @@ void RelaxationPTMu::stiffRelaxation(Cell *cell, const int &numberPhases, Prim t
 		rhoLSat = TB->eos[m_liq]->computeDensitySaturation(pStar, Tsat, dTsat, &drhoLSat);
 		rhoVSat = TB->eos[m_vap]->computeDensitySaturation(pStar, Tsat, dTsat, &drhoVSat);
 		//limit values
+		//another problem probably due to the EOS which is arising is that rhoVsat < rho, hence rhoVsat is assigned rho - e-6 in the next part and hence condensation comes out to be very low
 		if (rhoLSat <= rho) {
 			rhoLSat = rho + 1e-6;
 			drhoLSat = 0.;

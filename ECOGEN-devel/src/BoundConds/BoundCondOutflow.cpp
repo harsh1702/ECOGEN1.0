@@ -1,30 +1,30 @@
-//  
-//       ,---.     ,--,    .---.     ,--,    ,---.    .-. .-. 
-//       | .-'   .' .')   / .-. )  .' .'     | .-'    |  \| | 
-//       | `-.   |  |(_)  | | |(_) |  |  __  | `-.    |   | | 
-//       | .-'   \  \     | | | |  \  \ ( _) | .-'    | |\  | 
-//       |  `--.  \  `-.  \ `-' /   \  `-) ) |  `--.  | | |)| 
-//       /( __.'   \____\  )---'    )\____/  /( __.'  /(  (_) 
-//      (__)              (_)      (__)     (__)     (__)     
+//
+//       ,---.     ,--,    .---.     ,--,    ,---.    .-. .-.
+//       | .-'   .' .')   / .-. )  .' .'     | .-'    |  \| |
+//       | `-.   |  |(_)  | | |(_) |  |  __  | `-.    |   | |
+//       | .-'   \  \     | | | |  \  \ ( _) | .-'    | |\  |
+//       |  `--.  \  `-.  \ `-' /   \  `-) ) |  `--.  | | |)|
+//       /( __.'   \____\  )---'    )\____/  /( __.'  /(  (_)
+//      (__)              (_)      (__)     (__)     (__)
 //
 //  This file is part of ECOGEN.
 //
-//  ECOGEN is the legal property of its developers, whose names 
-//  are listed in the copyright file included with this source 
+//  ECOGEN is the legal property of its developers, whose names
+//  are listed in the copyright file included with this source
 //  distribution.
 //
 //  ECOGEN is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published 
-//  by the Free Software Foundation, either version 3 of the License, 
+//  it under the terms of the GNU General Public License as published
+//  by the Free Software Foundation, either version 3 of the License,
 //  or (at your option) any later version.
-//  
+//
 //  ECOGEN is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 //  GNU General Public License for more details.
-//  
+//
 //  You should have received a copy of the GNU General Public License
-//  along with ECOGEN (file LICENSE).  
+//  along with ECOGEN (file LICENSE).
 //  If not, see <http://www.gnu.org/licenses/>.
 
 //! \file      BoundCondOutflow.cpp
@@ -36,6 +36,9 @@
 
 using namespace std;
 using namespace tinyxml2;
+
+std::vector<double> m_p01Outflow;
+std::vector<double> TimePOutflow;
 
 //****************************************************************************
 
@@ -52,8 +55,8 @@ BoundCondOutflow::BoundCondOutflow(int numPhysique, XMLElement *element, int &nu
   //Recuperation des attributs
   //--------------------------
   XMLError error;
-  error = sousElement->QueryDoubleAttribute("p0", &m_p0);
-  if (error != XML_NO_ERROR) throw ErrorXMLAttribut("p0", fileName, __FILE__, __LINE__);
+  std::string filep0(sousElement->Attribute("p0"));
+  readFile(filep0,TimePOutflow,m_p01Outflow);
 
   //Lecture des transports
   int couleurTrouvee(0);
@@ -101,7 +104,7 @@ BoundCondOutflow::BoundCondOutflow(const BoundCondOutflow& Source, const int lvl
   for (int k = 0; k < m_numberTransports; k++) {
     m_valueTransport[k] = Source.m_valueTransport[k];
   }
-  
+
   m_debits = new double[m_numberPhases];
   for (int k = 0; k < m_numberPhases; k++) {
     m_debits[k] = 0.;
@@ -127,9 +130,26 @@ void BoundCondOutflow::creeLimite(CellInterface **face)
 
 //****************************************************************************
 
-void BoundCondOutflow::solveRiemannLimite(Cell &cellLeft, const int & numberPhases, const double & dxLeft, double & dtMax)
+void BoundCondOutflow::solveRiemannLimite(Cell &cellLeft, const int & numberPhases, const double & dxLeft, double & dtMax, double m_physicalTime)
 {
-  m_mod->solveRiemannOutflow(cellLeft, numberPhases, dxLeft, dtMax, m_p0, m_debits);
+  unsigned int i(0);
+
+  for (i = 0; i < (TimePOutflow.size() - 1) ; i++)
+  {
+    if (m_physicalTime < TimePOutflow[i])
+    {break;}
+  }
+
+  if (i < (TimePOutflow.size() - 1))
+  {
+    std::cout << "m_p01Outflow is " <<m_p01Outflow[i]<<'\n';
+    m_mod->solveRiemannOutflow(cellLeft, numberPhases, dxLeft, dtMax, m_p01Outflow[i], m_debits);
+  }
+  else
+  {
+    m_mod->solveRiemannOutflow(cellLeft, numberPhases, dxLeft, dtMax, m_p01Outflow[m_p01Outflow.size() - 1], m_debits);
+  }
+
   for (int k = 0; k < numberPhases; k++) {
     m_debits[k] *= this->getFace()->getSurface();
     //if (1) m_debits[k] *= 3.14*2.*this->getFace()->getPos().getY();
@@ -153,7 +173,7 @@ void BoundCondOutflow::printInfo()
 
 //****************************************************************************
 
-//double BoundCondOutflow::getDebit(int numPhase) const 
+//double BoundCondOutflow::getDebit(int numPhase) const
 //{
 //  return m_debits[numPhase];
 //}

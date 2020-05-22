@@ -1,30 +1,30 @@
-//  
-//       ,---.     ,--,    .---.     ,--,    ,---.    .-. .-. 
-//       | .-'   .' .')   / .-. )  .' .'     | .-'    |  \| | 
-//       | `-.   |  |(_)  | | |(_) |  |  __  | `-.    |   | | 
-//       | .-'   \  \     | | | |  \  \ ( _) | .-'    | |\  | 
-//       |  `--.  \  `-.  \ `-' /   \  `-) ) |  `--.  | | |)| 
-//       /( __.'   \____\  )---'    )\____/  /( __.'  /(  (_) 
-//      (__)              (_)      (__)     (__)     (__)     
+//
+//       ,---.     ,--,    .---.     ,--,    ,---.    .-. .-.
+//       | .-'   .' .')   / .-. )  .' .'     | .-'    |  \| |
+//       | `-.   |  |(_)  | | |(_) |  |  __  | `-.    |   | |
+//       | .-'   \  \     | | | |  \  \ ( _) | .-'    | |\  |
+//       |  `--.  \  `-.  \ `-' /   \  `-) ) |  `--.  | | |)|
+//       /( __.'   \____\  )---'    )\____/  /( __.'  /(  (_)
+//      (__)              (_)      (__)     (__)     (__)
 //
 //  This file is part of ECOGEN.
 //
-//  ECOGEN is the legal property of its developers, whose names 
-//  are listed in the copyright file included with this source 
+//  ECOGEN is the legal property of its developers, whose names
+//  are listed in the copyright file included with this source
 //  distribution.
 //
 //  ECOGEN is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published 
-//  by the Free Software Foundation, either version 3 of the License, 
+//  it under the terms of the GNU General Public License as published
+//  by the Free Software Foundation, either version 3 of the License,
 //  or (at your option) any later version.
-//  
+//
 //  ECOGEN is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 //  GNU General Public License for more details.
-//  
+//
 //  You should have received a copy of the GNU General Public License
-//  along with ECOGEN (file LICENSE).  
+//  along with ECOGEN (file LICENSE).
 //  If not, see <http://www.gnu.org/licenses/>.
 
 //! \file      Cell.cpp
@@ -45,6 +45,7 @@ Cell::Cell() : m_vecPhases(0), m_mixture(0), m_cons(0), m_vecTransports(0), m_co
 	m_split = false;
 }
 
+//***********************************************************************
 //***********************************************************************
 
 Cell::Cell(int lvl) : m_vecPhases(0), m_mixture(0), m_cons(0), m_vecTransports(0), m_consTransports(0), m_childrenCells(0), m_element(0)
@@ -239,7 +240,7 @@ void Cell::timeEvolutionAddPhys(const double &dt, const int &numberPhases, const
 
 void Cell::buildPrim(const int &numberPhases)
 {
-  m_cons->buildPrim(m_vecPhases, m_mixture, numberPhases); 
+  m_cons->buildPrim(m_vecPhases, m_mixture, numberPhases);
 }
 
 //***********************************************************************
@@ -529,9 +530,9 @@ Coord Cell::computeGradient(string nameVariable, int numPhase)
   double sommeDistanceY = 0.;
   double sommeDistanceZ = 0.;
   Coord grad(0.);               /*!< gradient vector for needed variable on the cell*/
-  Coord gradProjectedFace(0.);  /*!< gradient vector for the needed variable on a boundary in the absolute system of coordinate*/             
+  Coord gradProjectedFace(0.);  /*!< gradient vector for the needed variable on a boundary in the absolute system of coordinate*/
   double gradBord(0.);          /*!< gradient for needed variable on the boundary in the face direction*/
- 
+
   for (unsigned int b = 0; b < m_boundaries.size(); b++) {
     if (!m_boundaries[b]->getSplit()) {
       typeBord = m_boundaries[b]->whoAmI();
@@ -1069,9 +1070,9 @@ void Cell::refineCellAndBoundaries(const int &nbCellsY, const int &nbCellsZ, con
     if (m_boundaries[b]->whoAmI() == 0) { bordRef = m_boundaries[b]; break; } //Boundary type CellInterface/O2
   }
   int allocateSlopeLocal = 1;
-  
+
   //----------------
-  //Cells refinement 
+  //Cells refinement
   //----------------
 
   //Mesh data initialization for children cells
@@ -1526,7 +1527,7 @@ bool Cell::printGnuplotAMR(std::ofstream &fileStream, const int &dim, GeometricO
   int dimension(dim);
   Coord position = m_element->getPosition();
   //for cut printing
-  if (objet != 0) 
+  if (objet != 0)
   {
     if (objet->getType() != 0) { //For non probes objects
       ecrit = m_element->traverseObjet(*objet);
@@ -1546,12 +1547,12 @@ bool Cell::printGnuplotAMR(std::ofstream &fileStream, const int &dim, GeometricO
       if (objet != 0) { if (objet->getType() == 0) return true; } //probe specificity, unique.
     }
     else {
-      
+
       for (unsigned int i = 0; i < m_childrenCells.size(); i++) {
         m_childrenCells[i]->printGnuplotAMR(fileStream, dim, objet);
       }
     }
-  } 
+  }
   return false;
 }
 
