@@ -2,7 +2,7 @@
 <mesh>
 	<type structure="unStructured"/>
 	<unstructuredMesh>
-		<file name="/unstructured2D/ejector_mesh_2_very_coarse.msh"/>
+		<file name="/unstructured2D/mesh_2_very_coarse.msh"/>
 		<parallel GMSHPretraitement="true"/>
 	</unstructuredMesh>
 </mesh>
