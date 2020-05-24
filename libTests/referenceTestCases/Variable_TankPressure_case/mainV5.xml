@@ -1,6 +1,6 @@
 <?xml version = "1.0" encoding = "UTF-8" standalone = "yes"?>
 <computationParam>
-	<run>variableInletConditions_TestCase2</run>
+	<run>fixedInletConditions</run>
 	<outputMode format="XML" binary="false"/>
 	<timeControlMode iterations="false">
 		<iterations number="10000000" iterFreq="1000"/>
