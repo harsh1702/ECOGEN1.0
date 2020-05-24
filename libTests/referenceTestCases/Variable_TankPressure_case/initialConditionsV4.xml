@@ -1,0 +1,55 @@
+<?xml version = "1.0" encoding = "UTF-8" standalone = "yes"?>
+<CI>
+	<!-- LIST OF GEOMETRICAL DOMAINS  -->
+	<physicalDomains>	
+		<domain name="Right" state="rightChamber" type="halfSpace">
+			<dataHalfSpace axe="x" origin="15.0" direction="positive"/>
+		</domain>
+		<domain name="Left" state="leftChamber" type="halfSpace">
+			<dataHalfSpace axe="x" origin="15.0" direction="negative"/>
+		</domain>
+	</physicalDomains>	
+
+	<!-- LIST OF BOUNDARY CONDITIONS -->
+	<boundaryConditions>
+		<boundCond name="walls" type="wall" number="2" />
+		<boundCond name="walls" type="wall" number="4" />
+		<boundCond name="inlet" type="tank" number="5">
+		  <dataTank p0="9.0e6" T0="318"/>
+		  <fluidsProp>
+		    <dataFluid EOS="SG_co2liq_mod.xml" alpha="0.001"/>
+		    <dataFluid EOS="SG_co2gas_mod.xml" alpha="0.999"/>
+		  </fluidsProp>
+		</boundCond>
+		<boundCond name="outlet" type="outflow" number="3">
+		 <dataOutflow p0="3.25e6"/>
+		</boundCond>
+	</boundaryConditions>
+
+	
+    <!--  LIST OF STATES  -->
+    <state name="rightChamber">
+        <material type="fluide" EOS="SG_co2liq_mod.xml">
+            <dataFluid alpha="0.01" density="773.22"/>
+        </material>
+        <material type="fluide" EOS="SG_co2gas_mod.xml">
+            <dataFluid alpha="0.99" density="105.47"/>
+        </material>
+        <mixture>
+            <dataMix pressure = "6.25e6"/>
+            <velocity x="0." y="0." z="0."/>
+        </mixture>
+    </state>
+	<state name="leftChamber">
+        <material type="fluide" EOS="SG_co2liq_mod.xml">
+            <dataFluid alpha="0.01" density="773.22"/>
+        </material>
+        <material type="fluide" EOS="SG_co2gas_mod.xml">
+            <dataFluid alpha="0.99" density="105.47"/>
+        </material>
+        <mixture>
+            <dataMix pressure = "6.25e6"/>
+            <velocity x="0." y="0." z="0."/>
+        </mixture>
+    </state>
+</CI>
