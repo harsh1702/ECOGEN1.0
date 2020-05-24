@@ -1,8 +1,8 @@
 <?xml version = "1.0" encoding = "UTF-8" standalone = "yes"?>
 <model>
 	<flowModel name="Kapila" numberPhases="2" alphaNull="false"/>
-	<EOS name="SG_co2liq_mod.xml"/>
-	<EOS name="SG_co2gas_mod.xml"/>
+	<EOS name="SG_co2liq.xml"/>
+	<EOS name="SG_co2gas.xml"/>
 	<transport name="color"/>
 <!--	<additionalPhysic type="surfaceTension">
 		<dataSurfaceTension name="color" sigma="0.0075"/>
