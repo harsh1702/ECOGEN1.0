@@ -1,6 +1,6 @@
 <?xml version = "1.0" encoding = "UTF-8" standalone = "yes"?>
 <computationParam>
-	<run>MAY19properNakagawa_nozzle_without_surface_tension</run>
+	<run>variableInletConditions_TestCase</run>
 	<outputMode format="XML" binary="false"/>
 	<timeControlMode iterations="false">
 		<iterations number="10000000" iterFreq="1000"/>
