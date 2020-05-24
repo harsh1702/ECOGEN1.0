@@ -1,0 +1,15 @@
+<?xml version = "1.0" encoding = "UTF-8" standalone = "yes"?>
+<parametersEOS>
+	<EOS fichier="SG_co2gas_mod.xml" type="IG"/>
+	<parameters
+		gamma="0.935743"
+		pInf="0"
+		cv="-1751.57"
+		energyRef="885526"
+		entropyRef="-2894.93">
+	</parameters>
+	<physicalParameters
+		mu="21.306e-6"
+		lambda="0.053689">
+	</physicalParameters>
+</parametersEOS>

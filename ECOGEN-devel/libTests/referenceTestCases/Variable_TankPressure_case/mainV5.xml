@@ -1,0 +1,15 @@
+<?xml version = "1.0" encoding = "UTF-8" standalone = "yes"?>
+<computationParam>
+	<run>try6properNakagawa_nozzle_with_surface_tension</run>
+	<outputMode format="XML" binary="false"/>
+	<timeControlMode iterations="false">
+		<iterations number="10000000" iterFreq="1000"/>
+		<physicalTime totalTime="10" timeFreq="1e-5"/>
+	</timeControlMode>
+	<computationControl CFL="0.001"/>
+	<secondOrder>
+		<globalLimiter>mc</globalLimiter>
+		<globalVolumeFractionLimiter>thinc</globalVolumeFractionLimiter>
+    	<interfaceVolumeFractionLimiter>thinc</interfaceVolumeFractionLimiter>
+	</secondOrder>
+</computationParam>
