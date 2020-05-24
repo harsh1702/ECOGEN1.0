@@ -1,4 +1,0 @@
-Time(s)		Temperature(K)
-1e-6	375
-1e-5	375
-
